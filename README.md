@@ -9,5 +9,7 @@
 3. folder baru C:\node
 
 4. akses folder via terminal/cmd lalu pull :
+   
    cd C:\node
+
    git clone https://github.com/faizaldr/sragen-node.git
