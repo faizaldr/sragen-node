@@ -1,7 +1,5 @@
 const mainApp = function (app) {
-    const express = require("express");
-    // menggunakan fitur json request response
-    app.use(express.json())  
+    app.use('/api/pengaduan', require("./routes/pengaduanRoutes"));
 }
 
 module.exports = mainApp

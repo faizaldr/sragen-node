@@ -26,3 +26,6 @@
 
 5. jalankan :
     npm run dev
+
+6. akses :
+    http://localhost:3000
