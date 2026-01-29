@@ -16,11 +16,11 @@ console.log(person1.name);
 console.log(person1.halo());
 
 // Contoh 2 : Factory function (function yang mengembalikan objek)
-function createPerson(race, religion){
+function createPerson(race, religion) {
     return {
         race,
         religion,
-        info(){
+        info() {
             return `Person with race ${this.race} and religion ${this.religion} `
         }
     }
@@ -34,3 +34,16 @@ person2.employed = true;
 console.log(person2.employed);
 
 // Contoh 3 : 
+// const Employee = function(){}
+// anonimous function return (=>) 
+const Employee = (grade, name) => {
+    return {
+        grade,
+        name,
+        detail() { return `name is ${this.name} and grade ${this.grade}` }
+    }
+}
+
+const emp1 = Employee("A", "Ahmad");
+console.log(emp1.grade);
+console.log(emp1.detail());
