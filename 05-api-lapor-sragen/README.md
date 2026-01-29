@@ -35,10 +35,10 @@
     a. db : diskominfo_sragen
 
     b. tabel :
-    CREATE TABLE `diskominfo_sragen`.`pengaduan` (
-        `id` INT NOT NULL AUTO_INCREMENT , 
-        `judul` VARCHAR(255) NOT NULL , 
-        `isi` VARCHAR(16000) NOT NULL , 
-        `waktu` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
-        PRIMARY KEY (`id`)
-    ) ENGINE = InnoDB;
+        CREATE TABLE `diskominfo_sragen`.`pengaduan` (
+            `id` INT NOT NULL AUTO_INCREMENT , 
+            `judul` VARCHAR(255) NOT NULL , 
+            `isi` VARCHAR(16000) NOT NULL , 
+            `waktu` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+            PRIMARY KEY (`id`)
+        ) ENGINE = InnoDB;
