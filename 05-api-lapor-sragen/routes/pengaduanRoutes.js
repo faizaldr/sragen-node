@@ -9,6 +9,12 @@ router.get("/cek", (req, res) => {
 })
 
 // method : POST, url : http://localhost:3000/api/pengaduan
+/* body -> raw -> json :
+{
+    "judul": "Kerusakan jalan di depan SPBU kali jambe",
+    "isi": "terjadi kerusakan sejak 1 bulan dan belum diperbaiki"
+} 
+*/
 router.post("/", controller.create)
 
 module.exports = router
