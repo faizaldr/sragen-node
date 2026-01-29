@@ -12,6 +12,17 @@
     
     npm install express jsonwebtoken sequelize
 
+    npm install --save-dev nodemon
+
     # express framework: web server
     # jsonwebtoken: token authentication generator
     # sequelize: ORM (Object Relational Mapping), memetakan objek DB dengan Pemrograman
+
+4. package.json :
+    "main": "app.js",
+    # "scripts": {
+        "start":"node server.js",
+        "dev":"nodemon server.js",
+
+5. jalankan :
+    npm run dev
