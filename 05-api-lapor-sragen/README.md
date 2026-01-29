@@ -10,7 +10,7 @@
 
 3. install package :
     
-    npm install express jsonwebtoken sequelize
+    npm install express jsonwebtoken sequelize mysql2 bcrypt
 
     npm install --save-dev nodemon
 
@@ -29,3 +29,16 @@
 
 6. akses :
     http://localhost:3000
+
+7. Database MySQL:
+    
+    a. db : diskominfo_sragen
+
+    b. tabel :
+    CREATE TABLE `diskominfo_sragen`.`pengaduan` (
+        `id` INT NOT NULL AUTO_INCREMENT , 
+        `judul` VARCHAR(255) NOT NULL , 
+        `isi` VARCHAR(16000) NOT NULL , 
+        `waktu` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+        PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB;
