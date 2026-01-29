@@ -12,3 +12,5 @@ console.log(ADDRESS.country);
 
 // Tidak boleh, Assignment to constant variable
 ADDRESS = {}
+
+// jalankan : node 8-const-object-array.js
