@@ -12,6 +12,8 @@
     
     npm install express jsonwebtoken sequelize mysql2 bcrypt
 
+    npm install joi
+
     npm install --save-dev nodemon
 
     # express framework: web server
