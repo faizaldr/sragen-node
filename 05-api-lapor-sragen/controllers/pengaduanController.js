@@ -25,7 +25,18 @@ exports.getAll = async (req, res) => {
     return res.json(body);
 }
 
-// update Pengaduan.update 
-// update .save
+exports.getById = async (req, res) => {
+    const { id } = req.params
+    const pengaduanDB = await Pengaduan.findByPk(id)
 
-// delete .destroy
+    const body = BODY;
+    if (!pengaduanDB) {
+        body.status = "404";
+        body.message = "Data tidak ditemukan";
+        return res.status(404).json(body);
+    }
+
+    body.data = pengaduanDB;
+    body.message = "success";
+    return res.json(body);
+}

@@ -17,5 +17,6 @@ router.get("/cek", (req, res) => {
 */
 router.post("/", controller.create)
 router.get("/", controller.getAll)
+router.get("/:id", controller.getById)
 
 module.exports = router
