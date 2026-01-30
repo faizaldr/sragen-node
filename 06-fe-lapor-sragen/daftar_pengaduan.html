@@ -15,6 +15,7 @@
             <tr>
                 <td>Judul</td>
                 <td>Isi</td>
+                <td>Action</td>
             </tr>
         </thead>
 
@@ -45,10 +46,17 @@
                     columns: [
                         { data: "judul" },
                         { data: "isi" },
+                        {
+                            render: function (data, type, row, meta) {
+                                return `
+                                <a href='edit.html?id=${row.id}' <button>Ubah</button></a>
+                                <a href='hapus.html?id=${row.id}' <button>Hapus</button></a>
+                                `
+                            }
+                        }
                     ]
                 })
             }
-
         })
     </script>
 </body>
