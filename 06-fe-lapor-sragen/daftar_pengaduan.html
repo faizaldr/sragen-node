@@ -11,10 +11,17 @@
 
 <body>
     <table id="pengaduan_table">
+        <thead>
+            <tr>
+                <td>Judul</td>
+                <td>Isi</td>
+            </tr>
+        </thead>
 
     </table>
 
-    <script src="https://code.jquery.com/jquery-4.0.0.js" integrity="sha256-9fsHeVnKBvqh3FB2HYu7g2xseAZ5MlN6Kz/qnkASV8U=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-4.0.0.js"
+        integrity="sha256-9fsHeVnKBvqh3FB2HYu7g2xseAZ5MlN6Kz/qnkASV8U=" crossorigin="anonymous"></script>
     <script src="//cdn.datatables.net/2.3.6/js/dataTables.min.js"></script>
     <script>
         // jika ada animasi di awal dokumen termuat
@@ -32,6 +39,14 @@
                 alert("Gagal ambil data" + result.message)
             } else {
                 console.log(result.data)
+
+                new DataTable("#pengaduan_table", {
+                    data: result.data,
+                    columns: [
+                        { data: "judul" },
+                        { data: "isi" },
+                    ]
+                })
             }
 
         })
