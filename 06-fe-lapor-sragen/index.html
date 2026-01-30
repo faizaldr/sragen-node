@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="email" id="username" />
+    <input type="password" id="password" />
+    <button type="submit" onclick="actionLogin()">Login</button>
+
+    <script>
+        const actionLogin = async () => {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const body = {
+                username: username,
+                password: password
+            }
+
+            const response = await fetch("http://localhost:3000/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            })
+
+            const result = await response.json()
+
+            if(!response.ok){
+                alert("Gagal Login" + result.message)
+            }else{
+                await localStorage.setItem("token", result.data.token)
+                window.location.href = "daftar_pengaduan.html"
+            }
+
+        }
+
+        // jika ada animasi di awal dokumen termuat
+        document.addEventListener("DOMContentLoaded", function () { })
+    </script>
+</body>
+
+</html>

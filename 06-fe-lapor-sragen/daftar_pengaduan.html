@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/2.3.6/css/dataTables.dataTables.min.css" />
+
+</head>
+
+<body>
+    <table id="pengaduan_table">
+
+    </table>
+
+    <script src="https://code.jquery.com/jquery-4.0.0.js" integrity="sha256-9fsHeVnKBvqh3FB2HYu7g2xseAZ5MlN6Kz/qnkASV8U=" crossorigin="anonymous"></script>
+    <script src="//cdn.datatables.net/2.3.6/js/dataTables.min.js"></script>
+    <script>
+        // jika ada animasi di awal dokumen termuat
+        document.addEventListener("DOMContentLoaded", async function () {
+            const response = await fetch("http://localhost:3000/api/pengaduan", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                },
+            })
+
+            const result = await response.json()
+
+            if (!response.ok) {
+                alert("Gagal ambil data" + result.message)
+            } else {
+                console.log(result.data)
+            }
+
+        })
+    </script>
+</body>
+
+</html>
