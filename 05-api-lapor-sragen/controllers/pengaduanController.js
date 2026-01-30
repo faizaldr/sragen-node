@@ -40,3 +40,28 @@ exports.getById = async (req, res) => {
     body.message = "success";
     return res.json(body);
 }
+
+exports.update = async (req, res) => {
+    const { id } = req.params
+    const { judul, isi } = req.body
+
+    const pengaduanDB = await Pengaduan.findByPk(id)
+    const body = BODY
+    if (!pengaduanDB) {
+        body.status = "404";
+        body.message = "Data tidak ditemukan";
+        return res.status(404).json(body);
+    }
+
+    if (judul == undefined || isi == undefined) {
+        body.status = "404";
+        body.message = "Data judul dan isi tidak boleh kosong";
+        return res.status(404).json(body);
+    }
+
+    pengaduanDB.judul = judul
+    pengaduanDB.isi = isi
+    body.data = await pengaduanDB.save()
+    body.message = "Berhasil ubah data"
+    return res.json(body)
+}
