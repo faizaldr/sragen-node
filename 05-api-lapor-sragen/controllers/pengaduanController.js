@@ -62,6 +62,24 @@ exports.update = async (req, res) => {
     pengaduanDB.judul = judul
     pengaduanDB.isi = isi
     body.data = await pengaduanDB.save()
+    body.status = "200";
     body.message = "Berhasil ubah data"
+    return res.json(body)
+}
+
+exports.delete = async (req, res) => {
+    const { id } = req.params
+
+    const pengaduanDB = await Pengaduan.findByPk(id)
+    const body = BODY
+    if (!pengaduanDB) {
+        body.status = "404";
+        body.message = "Data tidak ditemukan";
+        return res.status(404).json(body);
+    }
+
+    body.data = await pengaduanDB.destroy();
+    body.status = "200";
+    body.message = "Data berhasil dihapus"
     return res.json(body)
 }
