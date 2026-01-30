@@ -6,21 +6,22 @@ const { BODY } = require("../config/responseBody")
 const ROLE = require('../config/role')
 
 const registerSchema = Joi.object({
-    username: Joi.string().email().required().message({
+    username: Joi.string().email().required().messages({
         'string.empty': "Username (email) wajib diisi",
         'string.email': "Username harus format email",
     }),
-    password: Joi.string().min(6).required().message({
+    password: Joi.string().min(6).required().messages({
         'string.empty': "Password harus diisi",
         'string.min': "Password minimal 6 karakter",
     }),
     confirm_password: Joi.any()
         .valid(Joi.ref("password"))
-        .required().message({
+        .required().messages({
             'any.only': "Password dan konfirmasi password berbeda",
-            'any.requre': "Konfirmasi password harus diisi",
+            'any.requred': "Konfirmasi password harus diisi",
         }),
 })
+
 
 exports.register = async (req, res) => {
     const { error, value } = registerSchema.validate(req.body)
