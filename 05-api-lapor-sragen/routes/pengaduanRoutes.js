@@ -1,5 +1,8 @@
 const router = require("express").Router();
+const ROLE = require("../config/role");
 const controller = require("../controllers/pengaduanController")
+const auth = require("../middleware/authMiddleware")
+const role = require("../middleware/roleMiddleware")
 
 // http://localhost:3000/api/pengaduan/cek
 router.get("/cek", (req, res) => {
@@ -15,13 +18,13 @@ router.get("/cek", (req, res) => {
     "isi": "terjadi kerusakan sejak 1 bulan dan belum diperbaiki"
 } 
 */
-router.post("/", controller.create)
-router.get("/", controller.getAll)
+router.post("/", auth, role(ROLE.USER), controller.create)
+router.get("/", auth, role(ROLE.ADMIN), controller.getAll)
 
 /*
 GET : http://localhost:3000/api/pengaduan/4
 */
-router.get("/:id", controller.getById)
+router.get("/:id", auth, role(ROLE.ADMIN), controller.getById)
 /*
 PUT : http://localhost:3000/api/pengaduan/4
 body -> raw -> json: 
@@ -30,10 +33,10 @@ body -> raw -> json:
     "isi": "ubah isi"
 } 
 */
-router.put("/:id", controller.update)
+router.put("/:id", auth, role(ROLE.ADMIN), controller.update)
 /*
 DELETE : http://localhost:3000/api/pengaduan/4
 */
-router.delete("/:id", controller.delete)
+router.delete("/:id", auth, role(ROLE.ADMIN), controller.delete)
 
 module.exports = router

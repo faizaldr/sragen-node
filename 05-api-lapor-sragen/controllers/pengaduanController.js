@@ -20,6 +20,7 @@ exports.create = async (req, res) => {
 
 exports.getAll = async (req, res) => {
     const pengaduanDB = await Pengaduan.findAll();
+    console.log(pengaduanDB)
     const body = BODY;
     body.data = pengaduanDB;
     return res.json(body);

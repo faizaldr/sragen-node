@@ -4,6 +4,7 @@ const Joi = require("joi")
 const { User } = require("../models")
 const { BODY } = require("../config/responseBody")
 const ROLE = require('../config/role')
+const { secret_key } = require('../config/utils')
 
 const registerSchema = Joi.object({
     username: Joi.string().email().required().messages({
@@ -130,7 +131,6 @@ exports.login = async (req, res) => {
         return res.status(404).json(body);
     }
 
-    const secret_key = "LNXZKUH(!987KJASd&!@#jcaWKAE"
     const token = jwt.sign({ id: existing.id, role: existing.role },
         secret_key, { expiresIn: "1d" })
 
