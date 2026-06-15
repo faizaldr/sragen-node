@@ -1,47 +1,110 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Login - Lapor Sragen</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <input type="email" id="username" />
-    <input type="password" id="password" />
-    <button type="submit" onclick="actionLogin()">Login</button>
+    <div class="main-container">
+        <div class="glass-card">
+            <h1 class="form-title">Lapor Sragen</h1>
+            <p class="form-subtitle">Masuk untuk mengelola atau melaporkan pengaduan</p>
+
+            <div class="form-group">
+                <label for="username">Username / Email</label>
+                <input type="email" id="username" class="form-input" placeholder="nama@email.com" required autocomplete="username" />
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" class="form-input" placeholder="Masukkan password Anda" required autocomplete="current-password" />
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="actionLogin()">
+                Masuk
+            </button>
+
+            <div class="form-footer-link">
+                Belum punya akun? <a href="register.html">Daftar di sini</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 Pemerintah Kabupaten Sragen. All rights reserved.
+    </footer>
 
     <script>
+        // Check if user is already logged in
+        document.addEventListener("DOMContentLoaded", () => {
+            const token = localStorage.getItem("token");
+            if (token) {
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    if (payload.role === "admin") {
+                        window.location.href = "daftar_pengaduan.html";
+                    } else {
+                        window.location.href = "tambah_pengaduan.html";
+                    }
+                } catch (e) {
+                    localStorage.removeItem("token");
+                }
+            }
+        });
+
         const actionLogin = async () => {
-            const username = document.getElementById("username").value;
+            const username = document.getElementById("username").value.trim();
             const password = document.getElementById("password").value;
+
+            if (!username || !password) {
+                alert("Username dan Password wajib diisi!");
+                return;
+            }
+
             const body = {
                 username: username,
                 password: password
+            };
+
+            try {
+                const response = await fetch("http://localhost:3000/api/auth/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    alert("Gagal Login: " + (result.message || "Username/password salah"));
+                } else {
+                    const token = result.data.token;
+                    localStorage.setItem("token", token);
+
+                    // Decode token to check role and redirect
+                    try {
+                        const payload = JSON.parse(atob(token.split('.')[1]));
+                        if (payload.role === "admin") {
+                            window.location.href = "daftar_pengaduan.html";
+                        } else {
+                            window.location.href = "tambah_pengaduan.html";
+                        }
+                    } catch (e) {
+                        // fallback
+                        window.location.href = "daftar_pengaduan.html";
+                    }
+                }
+            } catch (error) {
+                console.error("Error during login:", error);
+                alert("Tidak dapat menghubungi server. Pastikan API backend berjalan.");
             }
-
-            const response = await fetch("http://localhost:3000/api/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(body)
-            })
-
-            const result = await response.json()
-
-            if(!response.ok){
-                alert("Gagal Login" + result.message)
-            }else{
-                await localStorage.setItem("token", result.data.token)
-                window.location.href = "daftar_pengaduan.html"
-            }
-
         }
-
-        // jika ada animasi di awal dokumen termuat
-        document.addEventListener("DOMContentLoaded", function () { })
     </script>
 </body>
 

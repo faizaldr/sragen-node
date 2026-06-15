@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buat Pengaduan - Lapor Sragen</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="#" class="navbar-brand">
+            <span>📢</span> Lapor Sragen
+        </a>
+        <div class="navbar-user">
+            <div class="user-badge">
+                <span>👤</span> <span id="user-display">Memuat...</span>
+            </div>
+            <button class="btn-logout" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="main-container">
+        <div class="glass-card" style="max-width: 600px;">
+            <h1 class="form-title">Buat Pengaduan Baru</h1>
+            <p class="form-subtitle">Laporkan kerusakan infrastruktur atau keluhan Anda di Kabupaten Sragen</p>
+
+            <div id="role-warning" style="display:none; background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger-hover); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; color: var(--danger-hover); font-size: 0.9rem;">
+                ⚠️ <strong>Perhatian:</strong> Akun Anda ber-role Admin. Berdasarkan aturan API, Administrator tidak diizinkan mengirim pengaduan. Hanya akun ber-role User yang dapat mengirim laporan.
+            </div>
+
+            <div class="form-group">
+                <label for="judul">Judul Pengaduan</label>
+                <input type="text" id="judul" class="form-input" placeholder="Contoh: Jalan berlubang di Jl. Raya Sukowati" required />
+            </div>
+
+            <div class="form-group">
+                <label for="isi">Isi / Detail Pengaduan</label>
+                <textarea id="isi" class="form-input form-textarea" placeholder="Jelaskan secara detail lokasi dan masalah yang Anda temukan..." required></textarea>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <button type="submit" id="btn-submit" class="btn-primary" style="flex: 1;" onclick="actionSubmit()">
+                    Kirim Pengaduan
+                </button>
+                <button type="button" class="btn-secondary" style="flex: 1;" onclick="resetForm()">
+                    Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 Pemerintah Kabupaten Sragen. All rights reserved.
+    </footer>
+
+    <script>
+        // Authentication check
+        let userRole = null;
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            alert("Anda belum login. Silakan login terlebih dahulu.");
+            window.location.href = "index.html";
+        } else {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                userRole = payload.role;
+                document.getElementById("user-display").innerHTML = `Masuk sebagai: <strong>${userRole}</strong>`;
+                
+                // If user is Admin, disable the submit button and show warning
+                if (userRole === "admin") {
+                    document.getElementById("role-warning").style.display = "block";
+                    document.getElementById("btn-submit").disabled = true;
+                    document.getElementById("btn-submit").style.opacity = "0.5";
+                    document.getElementById("btn-submit").style.cursor = "not-allowed";
+                }
+            } catch (e) {
+                localStorage.removeItem("token");
+                window.location.href = "index.html";
+            }
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem("token");
+            window.location.href = "index.html";
+        }
+
+        // Reset Form
+        function resetForm() {
+            document.getElementById("judul").value = "";
+            document.getElementById("isi").value = "";
+        }
+
+        // Submit Complaint
+        const actionSubmit = async () => {
+            if (userRole === "admin") {
+                alert("Administrator tidak diizinkan mengirim pengaduan.");
+                return;
+            }
+
+            const judul = document.getElementById("judul").value.trim();
+            const isi = document.getElementById("isi").value.trim();
+
+            if (!judul || !isi) {
+                alert("Judul dan Isi pengaduan tidak boleh kosong!");
+                return;
+            }
+
+            const body = {
+                judul: judul,
+                isi: isi
+            };
+
+            try {
+                const response = await fetch("http://localhost:3000/api/pengaduan", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    alert("Gagal mengirim laporan: " + (result.message || "Terjadi kesalahan"));
+                } else {
+                    alert("Laporan pengaduan berhasil dikirim! Terima kasih atas laporan Anda.");
+                    resetForm();
+                }
+            } catch (error) {
+                console.error("Error submitting complaint:", error);
+                alert("Tidak dapat terhubung ke server backend.");
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -4,8 +4,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ubah Pengaduan - Lapor Sragen</title>
+    <title>Hapus Pengaduan - Lapor Sragen</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .warning-card {
+            border: 1px solid var(--danger-color);
+            background: rgba(239, 68, 68, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .complaint-preview {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-top: 1rem;
+        }
+        .complaint-preview h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        .complaint-preview p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            white-space: pre-wrap;
+        }
+    </style>
 </head>
 
 <body>
@@ -25,24 +51,24 @@
     <!-- Main Content Container -->
     <div class="main-container">
         <div class="glass-card" style="max-width: 600px;">
-            <h1 class="form-title">Ubah Pengaduan</h1>
-            <p class="form-subtitle">Edit judul atau isi laporan pengaduan masyarakat</p>
+            <h1 class="form-title" style="color: var(--danger-hover); background: none; -webkit-text-fill-color: initial;">Hapus Pengaduan</h1>
+            <p class="form-subtitle">Konfirmasi penghapusan data pengaduan secara permanen</p>
 
-            <input type="hidden" id="complaint-id" />
+            <div class="warning-card">
+                <p style="font-weight: 600; color: var(--danger-hover);">⚠️ Tindakan ini tidak dapat dibatalkan!</p>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.25rem;">
+                    Data pengaduan ini akan dihapus secara permanen dari database sistem Lapor Sragen.
+                </p>
 
-            <div class="form-group">
-                <label for="judul">Judul Pengaduan</label>
-                <input type="text" id="judul" class="form-input" placeholder="Memuat judul..." required />
+                <div class="complaint-preview">
+                    <h3 id="preview-judul">Memuat...</h3>
+                    <p id="preview-isi">Memuat detail laporan...</p>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="isi">Isi / Detail Pengaduan</label>
-                <textarea id="isi" class="form-input form-textarea" placeholder="Memuat detail laporan..." required></textarea>
-            </div>
-
-            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                <button type="submit" class="btn-primary" style="flex: 1;" onclick="actionUpdate()">
-                    Simpan Perubahan
+            <div style="display: flex; gap: 1rem;">
+                <button type="button" class="btn-primary" style="flex: 1; background: var(--danger-color); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);" onclick="actionDelete()">
+                    Ya, Hapus Permanen
                 </button>
                 <a href="daftar_pengaduan.html" class="btn-secondary" style="flex: 1; text-align: center;">
                     Batal
@@ -59,6 +85,7 @@
         // Authentication & Role Check
         let userRole = null;
         const token = localStorage.getItem("token");
+        let complaintId = null;
 
         if (!token) {
             alert("Anda belum login. Silakan login terlebih dahulu.");
@@ -89,14 +116,12 @@
         document.addEventListener("DOMContentLoaded", async () => {
             if (!token || userRole !== "admin") return;
 
-            const complaintId = getQueryParam("id");
+            complaintId = getQueryParam("id");
             if (!complaintId) {
                 alert("ID Pengaduan tidak ditemukan di URL!");
                 window.location.href = "daftar_pengaduan.html";
                 return;
             }
-
-            document.getElementById("complaint-id").value = complaintId;
 
             try {
                 const response = await fetch(`http://localhost:3000/api/pengaduan/${complaintId}`, {
@@ -112,11 +137,11 @@
                     alert("Gagal memuat data: " + (result.message || "Data tidak ditemukan"));
                     window.location.href = "daftar_pengaduan.html";
                 } else {
-                    document.getElementById("judul").value = result.data.judul || "";
-                    document.getElementById("isi").value = result.data.isi || "";
+                    document.getElementById("preview-judul").textContent = result.data.judul || "Tanpa Judul";
+                    document.getElementById("preview-isi").textContent = result.data.isi || "Tanpa Detail Isi";
                 }
             } catch (error) {
-                console.error("Error loading complaint:", error);
+                console.error("Error loading complaint details:", error);
                 alert("Tidak dapat terhubung ke server backend.");
                 window.location.href = "daftar_pengaduan.html";
             }
@@ -128,44 +153,28 @@
             window.location.href = "index.html";
         }
 
-        // Update action
-        const actionUpdate = async () => {
-            if (userRole !== "admin") return;
-
-            const id = document.getElementById("complaint-id").value;
-            const judul = document.getElementById("judul").value.trim();
-            const isi = document.getElementById("isi").value.trim();
-
-            if (!judul || !isi) {
-                alert("Judul dan Isi pengaduan tidak boleh kosong!");
-                return;
-            }
-
-            const body = {
-                judul: judul,
-                isi: isi
-            };
+        // Delete action
+        const actionDelete = async () => {
+            if (userRole !== "admin" || !complaintId) return;
 
             try {
-                const response = await fetch(`http://localhost:3000/api/pengaduan/${id}`, {
-                    method: "PUT",
+                const response = await fetch(`http://localhost:3000/api/pengaduan/${complaintId}`, {
+                    method: "DELETE",
                     headers: {
-                        "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`
-                    },
-                    body: JSON.stringify(body)
+                    }
                 });
 
                 const result = await response.json();
 
                 if (!response.ok) {
-                    alert("Gagal merubah data: " + (result.message || "Terjadi kesalahan"));
+                    alert("Gagal menghapus data: " + (result.message || "Terjadi kesalahan"));
                 } else {
-                    alert("Berhasil mengubah data pengaduan!");
+                    alert("Data pengaduan berhasil dihapus!");
                     window.location.href = "daftar_pengaduan.html";
                 }
             } catch (error) {
-                console.error("Error updating complaint:", error);
+                console.error("Error deleting complaint:", error);
                 alert("Tidak dapat terhubung ke server backend.");
             }
         }

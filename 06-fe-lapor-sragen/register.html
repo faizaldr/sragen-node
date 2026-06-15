@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Akun - Lapor Sragen</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="main-container">
+        <div class="glass-card">
+            <h1 class="form-title">Lapor Sragen</h1>
+            <p class="form-subtitle">Buat akun baru untuk melaporkan pengaduan Anda</p>
+
+            <div class="form-group">
+                <label for="username">Username / Email</label>
+                <input type="email" id="username" class="form-input" placeholder="nama@email.com" required autocomplete="username" />
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" class="form-input" placeholder="Minimal 6 karakter" required autocomplete="new-password" />
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Konfirmasi Password</label>
+                <input type="password" id="confirm_password" class="form-input" placeholder="Ulangi password Anda" required autocomplete="new-password" />
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;" onclick="actionRegister()">
+                Daftar Sekarang
+            </button>
+
+            <div class="form-footer-link">
+                Sudah punya akun? <a href="index.html">Masuk di sini</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 Pemerintah Kabupaten Sragen. All rights reserved.
+    </footer>
+
+    <script>
+        const actionRegister = async () => {
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value;
+            const confirm_password = document.getElementById("confirm_password").value;
+
+            if (!username || !password || !confirm_password) {
+                alert("Semua field wajib diisi!");
+                return;
+            }
+
+            if (password.length < 6) {
+                alert("Password minimal harus 6 karakter!");
+                return;
+            }
+
+            if (password !== confirm_password) {
+                alert("Password dan Konfirmasi Password tidak cocok!");
+                return;
+            }
+
+            const body = {
+                username: username,
+                password: password,
+                confirm_password: confirm_password
+            };
+
+            try {
+                const response = await fetch("http://localhost:3000/api/auth/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    alert("Registrasi Gagal: " + (result.message || "Terjadi kesalahan"));
+                } else {
+                    alert("Berhasil mendaftar! Silakan login.");
+                    window.location.href = "index.html";
+                }
+            } catch (error) {
+                console.error("Error during registration:", error);
+                alert("Tidak dapat menghubungi server. Pastikan API backend berjalan.");
+            }
+        }
+    </script>
+</body>
+
+</html>
